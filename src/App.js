@@ -35,15 +35,21 @@ const handleClick = () => {
   return (
     <div className="app">
     <div className="search">
-    <input type="text"
-    placeholder="Enter Location" onChange={e => setName(e.target.value)}
-    onKeyDown={handleClick}>
-    </input>
+    <input
+  type="text"
+  placeholder="Enter Location"
+  onChange={(e) => setName(e.target.value)}
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      handleClick();
+    }
+  }}
+/>
     </div>
       <div className="container">
         <div className="top">
           <div className="location">
-            <p>{name.charAt(0).toUpperCase() + name.slice(1)}</p>
+            <p>{data.name.charAt(0).toUpperCase() + data.name.slice(1)}</p>
           </div>
           <div className="temperature">
             <h1>{Math.round(data.celcius)}C</h1>
