@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useEffect, useState} from "react";
 import axios from "axios";
 
 function App() {
@@ -11,55 +11,58 @@ function App() {
     humidity: 91,
     wind: 3.6
   })
-  const [name, setName] = useState('')
 
-  const url = 'https://api.openweathermap.org/data/2.5/weather?q=${name}&appid=bc0bcac6f83b37e289c4657b266641b1&units=metric';
+const [name, setName] = useState('');
 
-  const searchLocation = (event) => {
-    if (name !== "") {
-      axios.get(url).then((resp) => {
-        console.log(resp.data)
-        setData({...data, celcius: resp.data.main.temp, name: resp.data.name,
-          weather: resp.data.weather.main, humidity:
-          resp.data.main.humidity, wind: resp.data.wind})
-      })
-    .catch( err => console.log(err));
-    }}
+// useEffect(() => {
 
+// }, [])
+
+const handleClick = () => {
+  if (name !== '') {
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${name}&appid=bc0bcac6f83b37e289c4657b266641b1&units=metric`;
+  axios.get(url)
+  .then(res => {
+    setData({...data, celcius: res.data.main.temp, name: res.data.name,
+      weather: res.data.weather[0].main,
+      feels: res.data.main.feels_like,
+      humidity:res.data.main.humidity, wind: res.data.wind.speed})
+  })
+  .catch (err => console.log(err));
+}
+}
 
   return (
     <div className="app">
     <div className="search">
-    <input value={name}
-    onChange={event => setName(event.target.value)}
-    onMouseEnter={searchLocation}
-    placeholder="Enter Location"
-    type="text"></input>
-
+    <input type="text"
+    placeholder="Enter Location" onChange={e => setName(e.target.value)}
+    onKeyDown={handleClick}>
+    </input>
     </div>
       <div className="container">
         <div className="top">
           <div className="location">
-            <p></p>
+            <p>{name.charAt(0).toUpperCase() + name.slice(1)}</p>
           </div>
           <div className="temperature">
             <h1>{Math.round(data.celcius)}C</h1>
           </div>
           <div className="description">
-            <p>Clear</p>
+            <p>{data.weather}</p>
           </div>
         </div>
         <div className="bottom">
           <div className="feels">
-            <p className="bold>">{data.feels}F</p>
+            <p className="bold>">{Math.round(data.feels)}</p>
             <p>Feels Like</p>
           </div>
           <div className="humidity">
-            <p className="bold>">38</p>
+            <p className="bold>">{Math.round(data.humidity)}</p>
             <p>Humidity</p>
           </div>
           <div className="wind>">
-            <p className="bold">8.49</p>
+            <p className="bold">{Math.round(data.wind)}</p>
             <p>Wind Speed</p>
           </div>
         </div>
